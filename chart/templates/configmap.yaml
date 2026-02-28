@@ -1,0 +1,11 @@
+{{- if .Values.config.inlineJson }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "cluster-home.fullname" . }}-config
+  labels:
+    {{- include "cluster-home.labels" . | nindent 4 }}
+data:
+  {{ .Values.config.fileName }}: |
+{{ .Values.config.inlineJson | nindent 4 }}
+{{- end }}

@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "cluster-home.fullname" . }}
+  labels:
+    {{- include "cluster-home.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "cluster-home.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "cluster-home.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: home
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.targetPort }}
+              protocol: TCP
+          env:
+            - name: PORT
+              value: {{ .Values.service.targetPort | quote }}
+            - name: HOME_CONFIG_PATH
+              value: {{ printf "%s/%s" .Values.config.mountPath .Values.config.fileName | quote }}
+          {{- if .Values.config.inlineJson }}
+          volumeMounts:
+            - name: home-config
+              mountPath: {{ printf "%s/%s" .Values.config.mountPath .Values.config.fileName | quote }}
+              subPath: {{ .Values.config.fileName }}
+              readOnly: true
+          {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- if .Values.config.inlineJson }}
+      volumes:
+        - name: home-config
+          configMap:
+            name: {{ include "cluster-home.fullname" . }}-config
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

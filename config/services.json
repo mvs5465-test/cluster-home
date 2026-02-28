@@ -1,0 +1,26 @@
+{
+  "title": "Cluster Home",
+  "subtitle": "A generic dark-themed dashboard for service links.",
+  "groups": [
+    {
+      "name": "Core",
+      "items": [
+        {
+          "name": "Docs",
+          "url": "https://docs.example.local",
+          "description": "Example documentation portal."
+        },
+        {
+          "name": "Status",
+          "url": "https://status.example.local",
+          "description": "Example status dashboard."
+        },
+        {
+          "name": "App",
+          "url": "https://app.example.local",
+          "description": "Example application entry point."
+        }
+      ]
+    }
+  ]
+}
