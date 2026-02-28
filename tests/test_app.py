@@ -61,6 +61,15 @@ class HomeAppTests(unittest.TestCase):
         config = load_config("/tmp/cluster-home-missing-config.json")
         self.assertEqual(config["title"], "Cluster Home")
 
+    def test_metrics_endpoint_exposes_prometheus_metrics(self):
+        self.client.get("/")
+
+        response = self.client.get("/metrics")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"cluster_home_http_requests_total", response.data)
+        self.assertIn(b"cluster_home_http_request_duration_seconds", response.data)
+
 
 if __name__ == "__main__":
     unittest.main()
