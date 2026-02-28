@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero">
+        <p class="eyebrow">home.lan</p>
+        <h1>{{ title }}</h1>
+        <p class="subtitle">{{ subtitle }}</p>
+        <p class="meta">{{ groups|length }} groups • {{ link_count }} links</p>
+      </section>
+
+      {% for group in groups %}
+      <section class="group">
+        <div class="group-header">
+          <h2>{{ group.name }}</h2>
+        </div>
+        <div class="grid">
+          {% for item in group["items"] %}
+          <a class="card" href="{{ item.url }}">
+            <span class="card-kicker">{{ group.name }}</span>
+            <span class="card-title">{{ item.name }}</span>
+            <span class="card-url">{{ item.url }}</span>
+            <span class="card-copy">{{ item.description }}</span>
+          </a>
+          {% endfor %}
+        </div>
+      </section>
+      {% endfor %}
+    </main>
+  </body>
+</html>

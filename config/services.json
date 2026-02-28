@@ -1,0 +1,66 @@
+{
+  "title": "Cluster Home",
+  "subtitle": "Human-friendly entry points into the local cluster.",
+  "groups": [
+    {
+      "name": "Infrastructure",
+      "items": [
+        {
+          "name": "ArgoCD",
+          "url": "https://argocd.lan",
+          "description": "GitOps control plane and deployment status."
+        },
+        {
+          "name": "Grafana",
+          "url": "http://grafana.lan",
+          "description": "Dashboards for metrics and logs."
+        },
+        {
+          "name": "Prometheus",
+          "url": "http://prometheus.lan",
+          "description": "Time-series metrics and ad hoc queries."
+        },
+        {
+          "name": "Gatus",
+          "url": "http://gatus.lan",
+          "description": "Service uptime and health checks."
+        }
+      ]
+    },
+    {
+      "name": "Apps",
+      "items": [
+        {
+          "name": "Chat",
+          "url": "http://chat.lan",
+          "description": "Open WebUI for local model chat."
+        },
+        {
+          "name": "Jellyfin",
+          "url": "http://jellyfin.lan",
+          "description": "Media library and streaming."
+        },
+        {
+          "name": "Outline",
+          "url": "http://outline.lan",
+          "description": "Collaborative wiki and knowledge base."
+        },
+        {
+          "name": "Wiki",
+          "url": "http://wiki.lan",
+          "description": "Lightweight in-browser notes and runbooks."
+        }
+      ]
+    },
+    {
+      "name": "Tools",
+      "items": [
+        {
+          "name": "Cluster Info",
+          "url": "http://info.lan",
+          "description": "Query and routing tools for cluster context."
+        }
+      ]
+    }
+  ]
+}

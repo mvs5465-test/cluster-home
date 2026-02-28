@@ -1,0 +1,6 @@
+apiVersion: v2
+name: cluster-home
+description: Lightweight dark-themed home dashboard for the local cluster
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
