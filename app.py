@@ -123,6 +123,24 @@ def render_icon_markup(icon: str | None, name: str) -> Markup:
     return render_icon(key, name)
 
 
+def cluster_stat_template(
+    namespaces: str = "n/a",
+    nodes: str = "n/a",
+    deployments: str = "n/a",
+    ready: str = "n/a",
+    healthy_pods: str = "n/a",
+    unhealthy: str = "n/a",
+) -> list[dict[str, str]]:
+    return [
+        {"label": "Namespaces", "value": namespaces},
+        {"label": "Nodes", "value": nodes},
+        {"label": "Deployments", "value": deployments},
+        {"label": "Ready", "value": ready},
+        {"label": "Healthy pods", "value": healthy_pods},
+        {"label": "Unhealthy", "value": unhealthy},
+    ]
+
+
 def load_cluster_info() -> dict:
     enabled = os.environ.get("CLUSTER_INFO_ENABLED", "true").lower() == "true"
     if not enabled:
@@ -130,7 +148,7 @@ def load_cluster_info() -> dict:
             "available": False,
             "mode": "disabled",
             "summary": "Cluster info disabled",
-            "stats": [],
+            "stats": cluster_stat_template(),
         }
 
     host = os.environ.get("KUBERNETES_SERVICE_HOST")
@@ -140,10 +158,7 @@ def load_cluster_info() -> dict:
             "available": False,
             "mode": "local",
             "summary": "Running outside the cluster",
-            "stats": [
-                {"label": "Mode", "value": "Local"},
-                {"label": "Source", "value": "Config only"},
-            ],
+            "stats": cluster_stat_template(),
         }
 
     token = SERVICE_ACCOUNT_TOKEN.read_text(encoding="utf-8").strip()
@@ -169,10 +184,7 @@ def load_cluster_info() -> dict:
             "available": False,
             "mode": "unreachable",
             "summary": "Kubernetes API unavailable",
-            "stats": [
-                {"label": "Mode", "value": "Fallback"},
-                {"label": "Source", "value": "Unavailable"},
-            ],
+            "stats": cluster_stat_template(),
         }
 
     unhealthy_pods = 0
@@ -196,14 +208,14 @@ def load_cluster_info() -> dict:
         "available": True,
         "mode": "cluster",
         "summary": "Live Kubernetes snapshot",
-        "stats": [
-            {"label": "Namespaces", "value": str(len(namespaces))},
-            {"label": "Nodes", "value": str(len(nodes))},
-            {"label": "Deployments", "value": str(len(deployments))},
-            {"label": "Ready", "value": f"{ready_deployments}/{len(deployments)}"},
-            {"label": "Healthy pods", "value": str(healthy_pods)},
-            {"label": "Unhealthy", "value": str(unhealthy_pods)},
-        ],
+        "stats": cluster_stat_template(
+            namespaces=str(len(namespaces)),
+            nodes=str(len(nodes)),
+            deployments=str(len(deployments)),
+            ready=f"{ready_deployments}/{len(deployments)}",
+            healthy_pods=str(healthy_pods),
+            unhealthy=str(unhealthy_pods),
+        ),
     }
 
 
