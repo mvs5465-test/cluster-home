@@ -17,6 +17,7 @@ class HomeAppTests(unittest.TestCase):
                             "items": [
                                 {
                                     "name": "Grafana",
+                                    "icon": "GF",
                                     "url": "http://grafana.test",
                                     "description": "Dashboards"
                                 }
@@ -33,6 +34,7 @@ class HomeAppTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b"Test Home", response.data)
         self.assertIn(b"Grafana", response.data)
+        self.assertIn(b"GF", response.data)
         self.assertIn(b"http://grafana.test", response.data)
 
     def test_health_endpoint_reports_counts(self):

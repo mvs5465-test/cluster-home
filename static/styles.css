@@ -13,10 +13,10 @@ body {
   margin: 0;
   min-height: 100vh;
   background:
-    radial-gradient(circle at 15% 15%, rgba(14, 165, 233, 0.18), transparent 30%),
-    radial-gradient(circle at 85% 20%, rgba(16, 185, 129, 0.12), transparent 28%),
-    radial-gradient(circle at 50% 100%, rgba(59, 130, 246, 0.12), transparent 34%),
-    linear-gradient(180deg, #020617 0%, #0f172a 100%);
+    radial-gradient(circle at 12% 14%, rgba(14, 165, 233, 0.26), transparent 24%),
+    radial-gradient(circle at 86% 18%, rgba(124, 58, 237, 0.18), transparent 22%),
+    radial-gradient(circle at 52% 82%, rgba(16, 185, 129, 0.14), transparent 28%),
+    linear-gradient(140deg, #020617 0%, #0b1120 48%, #111827 100%);
 }
 
 a {
@@ -31,8 +31,10 @@ a {
 }
 
 .hero {
-  background: linear-gradient(135deg, rgba(15, 23, 42, 0.88), rgba(17, 24, 39, 0.82));
-  border: 1px solid rgba(148, 163, 184, 0.16);
+  background:
+    linear-gradient(135deg, rgba(15, 23, 42, 0.88), rgba(30, 41, 59, 0.78)),
+    radial-gradient(circle at top right, rgba(34, 211, 238, 0.12), transparent 35%);
+  border: 1px solid rgba(148, 163, 184, 0.18);
   border-radius: 24px;
   box-shadow: 0 24px 60px rgba(2, 8, 23, 0.45);
   margin-bottom: 1.5rem;
@@ -92,10 +94,10 @@ a {
 
 .card {
   background:
-    linear-gradient(180deg, rgba(15, 23, 42, 0.92), rgba(15, 23, 42, 0.78));
-  border: 1px solid rgba(148, 163, 184, 0.14);
+    linear-gradient(180deg, rgba(30, 41, 59, 0.92), rgba(15, 23, 42, 0.82));
+  border: 1px solid rgba(148, 163, 184, 0.16);
   border-radius: 20px;
-  box-shadow: 0 16px 32px rgba(2, 8, 23, 0.28);
+  box-shadow: 0 16px 32px rgba(2, 8, 23, 0.36);
   display: grid;
   gap: 0.55rem;
   min-height: 200px;
@@ -105,8 +107,31 @@ a {
 
 .card:hover {
   border-color: rgba(103, 232, 249, 0.44);
-  box-shadow: 0 22px 38px rgba(8, 47, 73, 0.34);
+  box-shadow: 0 24px 44px rgba(8, 47, 73, 0.42);
   transform: translateY(-2px);
+}
+
+.card-top {
+  align-items: center;
+  display: flex;
+  gap: 0.7rem;
+}
+
+.card-icon {
+  align-items: center;
+  background:
+    linear-gradient(135deg, rgba(34, 211, 238, 0.18), rgba(59, 130, 246, 0.22));
+  border: 1px solid rgba(103, 232, 249, 0.22);
+  border-radius: 14px;
+  color: #cffafe;
+  display: inline-flex;
+  font-size: 0.9rem;
+  font-weight: 800;
+  height: 2.2rem;
+  justify-content: center;
+  letter-spacing: 0.04em;
+  min-width: 2.2rem;
+  padding: 0 0.5rem;
 }
 
 .card-kicker {
@@ -120,6 +145,10 @@ a {
 .card-title {
   font-size: 1.15rem;
   font-weight: 700;
+}
+
+.card-title-row {
+  display: block;
 }
 
 .card-url {
