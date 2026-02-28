@@ -30,6 +30,14 @@ spec:
               value: {{ printf "%s/%s" .Values.config.mountPath .Values.config.fileName | quote }}
             - name: CLUSTER_INFO_ENABLED
               value: {{ .Values.clusterInfo.enabled | quote }}
+            {{- if .Values.otel.endpoint }}
+            - name: OTEL_SERVICE_NAME
+              value: {{ .Values.otel.serviceName | quote }}
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: {{ .Values.otel.endpoint | quote }}
+            - name: OTEL_EXPORTER_OTLP_INSECURE
+              value: {{ .Values.otel.insecure | quote }}
+            {{- end }}
           {{- if .Values.config.inlineJson }}
           volumeMounts:
             - name: home-config

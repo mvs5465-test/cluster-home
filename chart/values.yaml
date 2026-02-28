@@ -42,6 +42,11 @@ rbac:
 clusterInfo:
   enabled: true
 
+otel:
+  endpoint: ""
+  insecure: true
+  serviceName: "cluster-home"
+
 nodeSelector: {}
 tolerations: []
 affinity: {}
