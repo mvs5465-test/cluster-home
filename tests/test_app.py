@@ -1,6 +1,6 @@
 import unittest
 
-from app import create_app
+from app import create_app, load_config
 
 
 class HomeAppTests(unittest.TestCase):
@@ -41,6 +41,10 @@ class HomeAppTests(unittest.TestCase):
         self.assertEqual(response.json["status"], "ok")
         self.assertEqual(response.json["groups"], 1)
         self.assertEqual(response.json["links"], 1)
+
+    def test_load_config_falls_back_to_default(self):
+        config = load_config("/tmp/cluster-home-missing-config.json")
+        self.assertEqual(config["title"], "Cluster Home")
 
 
 if __name__ == "__main__":

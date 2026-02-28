@@ -27,6 +27,11 @@ resources:
     memory: "128Mi"
     cpu: "100m"
 
+config:
+  fileName: services.json
+  mountPath: /config
+  inlineJson: ""
+
 nodeSelector: {}
 tolerations: []
 affinity: {}

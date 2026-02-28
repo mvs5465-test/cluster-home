@@ -1,64 +1,24 @@
 {
   "title": "Cluster Home",
-  "subtitle": "Human-friendly entry points into the local cluster.",
+  "subtitle": "A generic dark-themed dashboard for service links.",
   "groups": [
     {
-      "name": "Infrastructure",
+      "name": "Core",
       "items": [
         {
-          "name": "ArgoCD",
-          "url": "https://argocd.lan",
-          "description": "GitOps control plane and deployment status."
+          "name": "Docs",
+          "url": "https://docs.example.local",
+          "description": "Example documentation portal."
         },
         {
-          "name": "Grafana",
-          "url": "http://grafana.lan",
-          "description": "Dashboards for metrics and logs."
+          "name": "Status",
+          "url": "https://status.example.local",
+          "description": "Example status dashboard."
         },
         {
-          "name": "Prometheus",
-          "url": "http://prometheus.lan",
-          "description": "Time-series metrics and ad hoc queries."
-        },
-        {
-          "name": "Gatus",
-          "url": "http://gatus.lan",
-          "description": "Service uptime and health checks."
-        }
-      ]
-    },
-    {
-      "name": "Apps",
-      "items": [
-        {
-          "name": "Chat",
-          "url": "http://chat.lan",
-          "description": "Open WebUI for local model chat."
-        },
-        {
-          "name": "Jellyfin",
-          "url": "http://jellyfin.lan",
-          "description": "Media library and streaming."
-        },
-        {
-          "name": "Outline",
-          "url": "http://outline.lan",
-          "description": "Collaborative wiki and knowledge base."
-        },
-        {
-          "name": "Wiki",
-          "url": "http://wiki.lan",
-          "description": "Lightweight in-browser notes and runbooks."
-        }
-      ]
-    },
-    {
-      "name": "Tools",
-      "items": [
-        {
-          "name": "Cluster Info",
-          "url": "http://info.lan",
-          "description": "Query and routing tools for cluster context."
+          "name": "App",
+          "url": "https://app.example.local",
+          "description": "Example application entry point."
         }
       ]
     }

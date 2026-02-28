@@ -9,7 +9,10 @@ DEFAULT_CONFIG = Path(__file__).parent / "config" / "services.json"
 
 
 def load_config(path: str | None = None) -> dict:
-    config_path = Path(path or os.environ.get("HOME_CONFIG_PATH") or DEFAULT_CONFIG)
+    requested_path = path or os.environ.get("HOME_CONFIG_PATH")
+    config_path = Path(requested_path) if requested_path else DEFAULT_CONFIG
+    if not config_path.exists():
+        config_path = DEFAULT_CONFIG
     with config_path.open("r", encoding="utf-8") as handle:
         return json.load(handle)
 

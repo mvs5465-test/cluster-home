@@ -6,7 +6,7 @@ A lightweight dark-themed home dashboard for the local Kubernetes cluster.
 
 - Fast server-rendered dashboard
 - Dark-mode card layout
-- Built-in links for the human-facing cluster services
+- Generic default config with support for external per-cluster config
 - One-container deployment with a bundled Helm chart
 
 ## Local Run
@@ -23,3 +23,15 @@ The app listens on `http://127.0.0.1:8080`.
 ## Kubernetes
 
 The Helm chart lives in `chart/`. The default service listens on port `80` and forwards to the app on `8080`.
+
+To provide cluster-specific links from the deploying repo, set `config.inlineJson` in Helm values:
+
+```yaml
+config:
+  inlineJson: |
+    {
+      "title": "My Cluster",
+      "subtitle": "Links for my environment",
+      "groups": []
+    }
+```
