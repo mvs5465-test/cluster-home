@@ -4,8 +4,14 @@ import ssl
 from pathlib import Path
 from urllib import error, request
 
-from flask import Flask, jsonify, render_template
+from flask import Flask, g, jsonify, render_template, request as flask_request
 from markupsafe import Markup
+from opentelemetry import context, trace
+from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+from opentelemetry.sdk.resources import Resource
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from opentelemetry.trace import SpanKind, Status, StatusCode
 
 
 DEFAULT_CONFIG = Path(__file__).parent / "config" / "services.json"
@@ -80,6 +86,94 @@ ICON_ALIASES = {
     "wk": "wiki",
     "ci": "cluster-info",
 }
+
+TRACER_NAME = "cluster-home"
+_TRACING_CONFIGURED = False
+
+
+def _otlp_endpoint() -> str:
+    return (
+        os.environ.get("OTEL_EXPORTER_OTLP_TRACES_ENDPOINT")
+        or os.environ.get("OTEL_EXPORTER_OTLP_ENDPOINT")
+        or ""
+    ).strip()
+
+
+def _env_flag(name: str, default: bool) -> bool:
+    value = os.environ.get(name)
+    if value is None:
+        return default
+    return value.strip().lower() in {"1", "true", "yes", "on"}
+
+
+def _otlp_insecure(endpoint: str) -> bool:
+    if not endpoint:
+        return False
+    if "OTEL_EXPORTER_OTLP_TRACES_INSECURE" in os.environ:
+        return _env_flag("OTEL_EXPORTER_OTLP_TRACES_INSECURE", False)
+    if "OTEL_EXPORTER_OTLP_INSECURE" in os.environ:
+        return _env_flag("OTEL_EXPORTER_OTLP_INSECURE", False)
+    return endpoint.startswith("http://")
+
+
+def configure_tracing() -> bool:
+    global _TRACING_CONFIGURED
+
+    endpoint = _otlp_endpoint()
+    if not endpoint:
+        return False
+    if _TRACING_CONFIGURED:
+        return True
+
+    provider = TracerProvider(
+        resource=Resource.create(
+            {"service.name": os.environ.get("OTEL_SERVICE_NAME", TRACER_NAME)}
+        )
+    )
+    exporter = OTLPSpanExporter(
+        endpoint=endpoint,
+        insecure=_otlp_insecure(endpoint),
+    )
+    provider.add_span_processor(BatchSpanProcessor(exporter))
+    trace.set_tracer_provider(provider)
+    _TRACING_CONFIGURED = True
+    return True
+
+
+def _start_request_span() -> None:
+    tracer = trace.get_tracer(TRACER_NAME)
+    span = tracer.start_span(
+        f"{flask_request.method} {flask_request.path}",
+        kind=SpanKind.SERVER,
+    )
+    span.set_attribute("http.request.method", flask_request.method)
+    span.set_attribute("url.path", flask_request.path)
+    if flask_request.host:
+        span.set_attribute("server.address", flask_request.host)
+
+    token = context.attach(trace.set_span_in_context(span))
+    g._otel_request_span = span
+    g._otel_request_token = token
+
+
+def _finish_request_span(*, status_code: int | None = None, error_obj: BaseException | None = None) -> None:
+    span = g.pop("_otel_request_span", None)
+    token = g.pop("_otel_request_token", None)
+    if span is None:
+        return
+
+    if status_code is not None:
+        span.set_attribute("http.response.status_code", status_code)
+        if status_code >= 500:
+            span.set_status(Status(StatusCode.ERROR))
+
+    if error_obj is not None:
+        span.record_exception(error_obj)
+        span.set_status(Status(StatusCode.ERROR))
+
+    span.end()
+    if token is not None:
+        context.detach(token)
 
 
 def load_config(path: str | None = None) -> dict:
@@ -170,9 +264,19 @@ def load_cluster_info() -> dict:
     }
 
     def fetch_json(path: str) -> dict:
-        req = request.Request(f"{base_url}{path}", headers=headers)
-        with request.urlopen(req, context=context, timeout=1.5) as response:
-            return json.loads(response.read().decode("utf-8"))
+        tracer = trace.get_tracer(TRACER_NAME)
+        with tracer.start_as_current_span(
+            f"kubernetes.api {path}",
+            kind=SpanKind.CLIENT,
+        ) as span:
+            span.set_attribute("http.request.method", "GET")
+            span.set_attribute("url.path", path)
+            span.set_attribute("server.address", host)
+
+            req = request.Request(f"{base_url}{path}", headers=headers)
+            with request.urlopen(req, context=context, timeout=1.5) as response:
+                span.set_attribute("http.response.status_code", response.status)
+                return json.loads(response.read().decode("utf-8"))
 
     try:
         namespaces = fetch_json("/api/v1/namespaces").get("items", [])
@@ -221,10 +325,26 @@ def load_cluster_info() -> dict:
 
 def create_app(test_config: dict | None = None) -> Flask:
     app = Flask(__name__)
+    tracing_enabled = configure_tracing()
     app.config.update(SITE_CONFIG=load_config())
 
     if test_config:
         app.config.update(test_config)
+
+    if tracing_enabled:
+        @app.before_request
+        def begin_request_span() -> None:
+            _start_request_span()
+
+        @app.after_request
+        def end_request_span(response):
+            _finish_request_span(status_code=response.status_code)
+            return response
+
+        @app.teardown_request
+        def teardown_request_span(error_obj: BaseException | None) -> None:
+            if error_obj is not None:
+                _finish_request_span(error_obj=error_obj)
 
     @app.context_processor
     def inject_helpers() -> dict:
