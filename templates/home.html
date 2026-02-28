@@ -41,7 +41,7 @@
           </div>
           <div class="grid">
             {% for item in group["items"] %}
-            <a class="card" href="{{ item.url }}">
+            <a class="card" href="{{ item.url }}" target="_blank" rel="noreferrer noopener">
               <div class="card-top">
                 <span class="card-icon">{{ render_icon(item.get("icon"), item["name"]) }}</span>
                 <span class="card-title-row">
