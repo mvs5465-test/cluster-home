@@ -9,35 +9,52 @@
   </head>
   <body>
     <main class="shell">
-      <section class="hero">
-        <p class="eyebrow">home.lan</p>
-        <h1>{{ title }}</h1>
-        <p class="subtitle">{{ subtitle }}</p>
-        <p class="meta">{{ groups|length }} groups • {{ link_count }} links</p>
-      </section>
-
-      {% for group in groups %}
-      <section class="group">
-        <div class="group-header">
-          <h2>{{ group.name }}</h2>
-        </div>
-        <div class="grid">
-          {% for item in group["items"] %}
-          <a class="card" href="{{ item.url }}">
-            <div class="card-top">
-              <span class="card-icon">{{ item.get("icon", item["name"][:2].upper()) }}</span>
-              <span class="card-kicker">{{ group.name }}</span>
+      <div class="page-frame">
+        <section class="hero">
+          <div class="hero-copy">
+            <p class="eyebrow">home.lan</p>
+            <h1>{{ title }}</h1>
+            <p class="subtitle">{{ subtitle }}</p>
+            <p class="meta">{{ groups|length }} groups • {{ link_count }} links</p>
+          </div>
+          <aside class="hero-panel">
+            <div class="hero-panel-head">
+              <span class="hero-panel-title">Cluster Status</span>
+              <span class="hero-panel-badge">{{ cluster_info["mode"] }}</span>
             </div>
-            <span class="card-title-row">
-              <span class="card-title">{{ item.name }}</span>
-            </span>
-            <span class="card-url">{{ item.url }}</span>
-            <span class="card-copy">{{ item.description }}</span>
-          </a>
-          {% endfor %}
-        </div>
-      </section>
-      {% endfor %}
+            <p class="hero-panel-copy">{{ cluster_info["summary"] }}</p>
+            <div class="hero-stats">
+              {% for stat in cluster_info["stats"] %}
+              <div class="hero-stat">
+                <span class="hero-stat-label">{{ stat["label"] }}</span>
+                <span class="hero-stat-value">{{ stat["value"] }}</span>
+              </div>
+              {% endfor %}
+            </div>
+          </aside>
+        </section>
+
+        {% for group in groups %}
+        <section class="group-shell accent-{{ loop.index0 % 4 }}">
+          <div class="group-header">
+            <h2>{{ group.name }}</h2>
+          </div>
+          <div class="grid">
+            {% for item in group["items"] %}
+            <a class="card" href="{{ item.url }}">
+              <div class="card-top">
+                <span class="card-icon">{{ render_icon(item.get("icon"), item["name"]) }}</span>
+                <span class="card-title-row">
+                  <span class="card-title">{{ item.name }}</span>
+                </span>
+              </div>
+              <span class="card-copy">{{ item.description }}</span>
+            </a>
+            {% endfor %}
+          </div>
+        </section>
+        {% endfor %}
+      </div>
     </main>
   </body>
 </html>

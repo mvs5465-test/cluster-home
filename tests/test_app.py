@@ -11,9 +11,9 @@ class HomeAppTests(unittest.TestCase):
                 "SITE_CONFIG": {
                     "title": "Test Home",
                     "subtitle": "Testing dashboard",
-                    "groups": [
-                        {
-                            "name": "Infra",
+                "groups": [
+                    {
+                        "name": "Infra",
                             "items": [
                                 {
                                     "name": "Grafana",
@@ -25,6 +25,15 @@ class HomeAppTests(unittest.TestCase):
                         }
                     ]
                 },
+                "CLUSTER_INFO": {
+                    "available": True,
+                    "mode": "cluster",
+                    "summary": "Live Kubernetes snapshot",
+                    "stats": [
+                        {"label": "Namespaces", "value": "4"},
+                        {"label": "Healthy pods", "value": "12"},
+                    ],
+                },
             }
         )
         self.client = self.app.test_client()
@@ -34,7 +43,11 @@ class HomeAppTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b"Test Home", response.data)
         self.assertIn(b"Grafana", response.data)
-        self.assertIn(b"GF", response.data)
+        self.assertIn(b"Cluster Status", response.data)
+        self.assertIn(b"Healthy pods", response.data)
+        self.assertTrue(
+            b'class="logo-mark"' in response.data or b'class="glyph glyph-' in response.data
+        )
         self.assertIn(b"http://grafana.test", response.data)
 
     def test_health_endpoint_reports_counts(self):

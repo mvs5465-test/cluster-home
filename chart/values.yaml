@@ -32,6 +32,16 @@ config:
   mountPath: /config
   inlineJson: ""
 
+serviceAccount:
+  create: true
+  name: ""
+
+rbac:
+  create: true
+
+clusterInfo:
+  enabled: true
+
 nodeSelector: {}
 tolerations: []
 affinity: {}
