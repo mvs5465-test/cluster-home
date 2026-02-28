@@ -1,14 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <defs>
-    <linearGradient id="sky" x1="0%" y1="0%" x2="100%" y2="100%">
+    <linearGradient id="roof" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#60a5fa"/>
+      <stop offset="100%" stop-color="#38bdf8"/>
+    </linearGradient>
+    <linearGradient id="body" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#1d4ed8"/>
       <stop offset="100%" stop-color="#22d3ee"/>
     </linearGradient>
   </defs>
-  <circle cx="48" cy="19" r="5" fill="#fef3c7"/>
-  <path d="M18 34l14-11 14 11v13H18z" fill="url(#sky)"/>
-  <path d="M22 32.5l10-8 10 8" fill="none" stroke="#e0f2fe" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
-  <rect x="22" y="35" width="20" height="12" rx="2" fill="#164e63"/>
-  <rect x="29" y="38" width="6" height="9" rx="1.5" fill="#cffafe"/>
-  <path d="M18 48c4-3 8-3 12 0s8 3 12 0 8-3 12 0" fill="none" stroke="#7dd3fc" stroke-width="2.5" stroke-linecap="round" opacity="0.9"/>
+  <path d="M12 31.5L32 15l20 16.5" fill="none" stroke="url(#roof)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M17 30h30v20H17z" fill="url(#body)"/>
+  <rect x="27.5" y="37" width="9" height="13" rx="2.5" fill="#dbeafe"/>
+  <rect x="20.5" y="37" width="5.5" height="5.5" rx="1.5" fill="#dbeafe" opacity="0.9"/>
+  <rect x="38" y="37" width="5.5" height="5.5" rx="1.5" fill="#dbeafe" opacity="0.9"/>
 </svg>
