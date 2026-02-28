@@ -14,6 +14,7 @@ spec:
       labels:
         {{- include "cluster-home.selectorLabels" . | nindent 8 }}
     spec:
+      serviceAccountName: {{ if .Values.serviceAccount.name }}{{ .Values.serviceAccount.name }}{{ else }}{{ include "cluster-home.fullname" . }}{{ end }}
       containers:
         - name: home
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -27,6 +28,8 @@ spec:
               value: {{ .Values.service.targetPort | quote }}
             - name: HOME_CONFIG_PATH
               value: {{ printf "%s/%s" .Values.config.mountPath .Values.config.fileName | quote }}
+            - name: CLUSTER_INFO_ENABLED
+              value: {{ .Values.clusterInfo.enabled | quote }}
           {{- if .Values.config.inlineJson }}
           volumeMounts:
             - name: home-config

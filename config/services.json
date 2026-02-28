@@ -21,6 +21,75 @@
           "description": "Example application entry point."
         }
       ]
+    },
+    {
+      "name": "Observability",
+      "items": [
+        {
+          "name": "Grafana",
+          "icon": "grafana",
+          "url": "https://grafana.example.local",
+          "description": "Dashboards and alert drill-down for operators."
+        },
+        {
+          "name": "Prometheus",
+          "icon": "prometheus",
+          "url": "https://prometheus.example.local",
+          "description": "Metrics explorer for ad hoc queries and rule debugging."
+        },
+        {
+          "name": "Status",
+          "icon": "gatus",
+          "url": "https://status.example.local",
+          "description": "Service checks and current health at a glance."
+        },
+        {
+          "name": "Logs",
+          "icon": "cluster-info",
+          "url": "https://logs.example.local",
+          "description": "Centralized log search for incidents and audits."
+        }
+      ]
+    },
+    {
+      "name": "Operations",
+      "items": [
+        {
+          "name": "ArgoCD",
+          "icon": "argocd",
+          "url": "https://argocd.example.local",
+          "description": "Deployment history, sync status, and rollout controls."
+        },
+        {
+          "name": "Runbooks",
+          "icon": "wiki",
+          "url": "https://runbooks.example.local",
+          "description": "Operational notes, procedures, and incident checklists."
+        },
+        {
+          "name": "Chat",
+          "icon": "chat",
+          "url": "https://chat.example.local",
+          "description": "Team coordination and incident response entry point."
+        }
+      ]
+    },
+    {
+      "name": "Media",
+      "items": [
+        {
+          "name": "Jellyfin",
+          "icon": "jellyfin",
+          "url": "https://media.example.local",
+          "description": "Streaming, libraries, and personal media management."
+        },
+        {
+          "name": "Assets",
+          "icon": "docs",
+          "url": "https://assets.example.local",
+          "description": "Internal file drops, approvals, and shared downloads."
+        }
+      ]
     }
   ]
 }
