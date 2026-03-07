@@ -1,10 +1,11 @@
 import json
 import os
 import ssl
+import time
 from pathlib import Path
 from urllib import error, request
 
-from flask import Flask, g, jsonify, render_template, request as flask_request
+from flask import Flask, Response, g, jsonify, render_template, request as flask_request
 from markupsafe import Markup
 from opentelemetry import context, trace
 from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
@@ -12,6 +13,7 @@ from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.trace import SpanKind, Status, StatusCode
+from prometheus_client import CONTENT_TYPE_LATEST, CollectorRegistry, Counter, Histogram, generate_latest, multiprocess
 
 
 DEFAULT_CONFIG = Path(__file__).parent / "config" / "services.json"
@@ -89,6 +91,16 @@ ICON_ALIASES = {
 
 TRACER_NAME = "cluster-home"
 _TRACING_CONFIGURED = False
+HTTP_REQUESTS = Counter(
+    "cluster_home_http_requests_total",
+    "Total HTTP requests handled by cluster-home.",
+    ["method", "handler", "status"],
+)
+HTTP_REQUEST_DURATION = Histogram(
+    "cluster_home_http_request_duration_seconds",
+    "HTTP request latency for cluster-home.",
+    ["method", "handler"],
+)
 
 
 def _otlp_endpoint() -> str:
@@ -174,6 +186,23 @@ def _finish_request_span(*, status_code: int | None = None, error_obj: BaseExcep
     span.end()
     if token is not None:
         context.detach(token)
+
+
+def _handler_label() -> str:
+    if flask_request.url_rule is not None:
+        return flask_request.url_rule.rule
+    return flask_request.path
+
+
+def _metrics_response() -> Response:
+    multiproc_dir = os.environ.get("PROMETHEUS_MULTIPROC_DIR", "").strip()
+    if multiproc_dir:
+        registry = CollectorRegistry()
+        multiprocess.MultiProcessCollector(registry)
+        payload = generate_latest(registry)
+    else:
+        payload = generate_latest()
+    return Response(payload, mimetype=CONTENT_TYPE_LATEST)
 
 
 def load_config(path: str | None = None) -> dict:
@@ -346,6 +375,31 @@ def create_app(test_config: dict | None = None) -> Flask:
             if error_obj is not None:
                 _finish_request_span(error_obj=error_obj)
 
+    @app.before_request
+    def begin_metrics_timer() -> None:
+        if flask_request.path == "/metrics":
+            return
+        g._metrics_started_at = time.perf_counter()
+
+    @app.after_request
+    def record_request_metrics(response):
+        started_at = g.pop("_metrics_started_at", None)
+        if started_at is None:
+            return response
+
+        handler = _handler_label()
+        duration = max(time.perf_counter() - started_at, 0.0)
+        HTTP_REQUEST_DURATION.labels(
+            method=flask_request.method,
+            handler=handler,
+        ).observe(duration)
+        HTTP_REQUESTS.labels(
+            method=flask_request.method,
+            handler=handler,
+            status=str(response.status_code),
+        ).inc()
+        return response
+
     @app.context_processor
     def inject_helpers() -> dict:
         return {"render_icon": render_icon_markup}
@@ -377,6 +431,10 @@ def create_app(test_config: dict | None = None) -> Flask:
                 "links": link_count,
             }
         )
+
+    @app.get("/metrics")
+    def metrics():
+        return _metrics_response()
 
     return app
 
