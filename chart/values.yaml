@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: ghcr.io/mvs5465/cluster-home
+  repository: ghcr.io/mvs5465-test/cluster-home
   tag: "main"
   pullPolicy: Always
 
