@@ -29,7 +29,7 @@ jobs:
           PYTHONPATH: .
 
   ct-lint:
-    uses: mvs5465-test/.github/.github/workflows/ct-lint.yml@feat/ct-lint-reusable
+    uses: mvs5465-test/.github/.github/workflows/ct-lint.yml@main
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref || github.run_id }}
