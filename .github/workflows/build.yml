@@ -1,17 +1,10 @@
 name: Build and Push Docker Image
 
 on:
+  pull_request:
   push:
     branches:
       - main
-    paths:
-      - "Dockerfile"
-      - "requirements.txt"
-      - "*.py"
-      - "config/**"
-      - "templates/**"
-      - "static/**"
-      - ".github/workflows/build.yml"
   workflow_dispatch:
 
 jobs:
