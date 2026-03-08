@@ -1,0 +1,8 @@
+helm:
+  parameters:
+  - name: image.repository
+    value: ghcr.io/mvs5465-test/cluster-home
+    forcestring: true
+  - name: image.tag
+    value: main@sha256:5fe22df0cb5e74c50c472678ae7618b965b4b8adca3db6fb4f3900f186c378ea
+    forcestring: true
