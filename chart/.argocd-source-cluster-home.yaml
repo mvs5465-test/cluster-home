@@ -4,5 +4,5 @@ helm:
     value: ghcr.io/mvs5465-test/cluster-home
     forcestring: true
   - name: image.tag
-    value: main@sha256:ac9ae0e53a5c8e377d03e31565ffec82274a8e0fb599d260ba5548c6727b0ae6
+    value: main@sha256:26b922e8706f96371304a8880a64faf3f5491d6e92683899a99c1143ac5f52c6
     forcestring: true
